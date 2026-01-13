@@ -89,6 +89,27 @@ def show_pokemon(request, pokemon_id):
             img_url
         )
 
+    previous_evolution = None
+    if pokemon.previous_evolution:
+        previos_pokemon = pokemon.previous_evolution
+        previous_evolution = {
+            'pokemon_id': previos_pokemon.id,
+            'title_ru': previos_pokemon.title,
+            'img_url': request.build_absolute_uri(previos_pokemon.photo.url)
+                if previos_pokemon.photo else DEFAULT_IMAGE_URL
+        }
+
+    next_evolution = None
+    next_pokemon = pokemon.next_evolutions.all()
+    if next_pokemon.exists():
+        next_pokemon = next_pokemon.first()
+        next_evolution = {
+            'pokemon_id': next_pokemon.id,
+            'title_ru': next_pokemon.title,
+            'img_url': request.build_absolute_uri(next_pokemon.photo.url)
+                if next_pokemon.photo else DEFAULT_IMAGE_URL,
+        }
+
     pokemon_data = {
         'id': pokemon.id,
         'title_ru': pokemon.title,
@@ -97,8 +118,11 @@ def show_pokemon(request, pokemon_id):
         'description': pokemon.description,
         'img_url': request.build_absolute_uri(pokemon.photo.url)
             if pokemon.photo else DEFAULT_IMAGE_URL,
-        'entities': [],
+        'previous_evolution': previous_evolution,
+        'next_evolution': next_evolution,
+        'entities': []
     }
+
     for entity in entities:
         pokemon_data['entities'].append({
             'level': entity.level,
