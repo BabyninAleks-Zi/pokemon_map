@@ -100,9 +100,8 @@ def show_pokemon(request, pokemon_id):
         }
 
     next_evolution = None
-    next_pokemon = pokemon.next_evolutions.all()
-    if next_pokemon.exists():
-        next_pokemon = next_pokemon.first()
+    next_pokemon = pokemon.next_evolutions.first()
+    if next_pokemon:
         next_evolution = {
             'pokemon_id': next_pokemon.id,
             'title_ru': next_pokemon.title,
